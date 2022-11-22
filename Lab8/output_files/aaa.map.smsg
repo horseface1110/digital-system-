@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at aaa.v(9): always construct contains both blocking and non-blocking assignments File: C:/system/aaa.v Line: 9
