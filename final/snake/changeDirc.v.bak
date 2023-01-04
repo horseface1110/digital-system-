@@ -1,0 +1,24 @@
+module changeDirec(up,down,left,right,direction);
+input up,down,left,right;
+output[1:0] direction;
+reg [1:0] direction;
+always@(posedge up or posedge down or posedge left or posedge right)
+begin
+   if(up)
+	begin
+	direction<=2'd0;
+	end
+	else if(down)
+	begin
+	direction<=2'd1;
+	end
+	else if(left)
+	begin
+	direction<=2'd2;
+	end
+	else 
+	begin
+	direction<=2'd3;
+	end
+end
+endmodule

@@ -1,0 +1,376 @@
+module move(clk,live,direction,len,rst);
+
+input clk,rst;
+input [1:0]direction;
+output [6*8*8-1:0]live;
+output [5:0] len;
+
+reg [2:0] head [0:1];
+reg [2:0] apple [0:1];
+reg [5:0] len;
+reg [5:0] lives [7:0][7:0];
+reg [6*8*8-1:0]live;
+integer xp,yp;
+
+
+
+integer seed1;
+integer seed0;
+initial  begin 
+seed1 = 0; 
+seed0 = 1;
+end
+
+always@(posedge clk or negedge rst)
+begin
+	if(!rst)
+	begin
+		len <= 6'd3;
+		head[0] <= 6;          ///進位教學 https://www.gushiciku.cn/pl/gDpR/zh-tw
+		head[1] <= 1;          ///head0是x座標，1是y座標，初始放在左下角，往上走
+		lives[0][0] <= 6'd1;
+		lives[0][1] <= 6'd1;
+		lives[0][2] <= 6'd1;
+		lives[0][3] <= 6'd1;
+		lives[0][4] <= 6'd1;
+		lives[0][5] <= 6'd1;
+		lives[0][6] <= 6'd1;
+		lives[0][7] <= 6'd1;
+		
+		lives[1][0] <= 6'd1;
+		lives[1][1] <= 6'd0;
+		lives[1][2] <= 6'd0;
+		lives[1][3] <= 6'd0;
+		lives[1][4] <= 6'd0;
+		lives[1][5] <= 6'd0;
+		lives[1][6] <= 6'd0;
+		lives[1][7] <= 6'd1;
+		
+		lives[2][0] <= 6'd1;
+		lives[2][1] <= 6'd0;
+		lives[2][2] <= 6'd0;
+		lives[2][3] <= 6'd0;
+		lives[2][4] <= 6'd0;
+		lives[2][5] <= 6'd0;
+		lives[2][6] <= 6'd0;
+		lives[2][7] <= 6'd1;
+		
+		lives[3][0] <= 6'd1;
+		lives[3][1] <= 6'd0;
+		lives[3][2] <= 6'd0;
+		lives[3][3] <= 6'd0;
+		lives[3][4] <= 6'd0;
+		lives[3][5] <= 6'd0;
+		lives[3][6] <= 6'd0;
+		lives[3][7] <= 6'd1;
+		
+		lives[4][0] <= 6'd1;
+		lives[4][1] <= 6'd0;
+		lives[4][2] <= 6'd0;
+		lives[4][3] <= 6'd0;
+		lives[4][4] <= 6'd0;
+		lives[4][5] <= 6'd0;
+		lives[4][6] <= 6'd0;
+		lives[4][7] <= 6'd1;
+		
+		lives[5][0] <= 6'd1;
+		lives[5][1] <= 6'd0;
+		lives[5][2] <= 6'd0;
+		lives[5][3] <= 6'd0;
+		lives[5][4] <= 6'd0;
+		lives[5][5] <= 6'd0;
+		lives[5][6] <= 6'd0;
+		lives[5][7] <= 6'd1;
+		
+		lives[6][0] <= 6'd1;
+		lives[6][1] <= 6'd0;
+		lives[6][2] <= 6'd0;
+		lives[6][3] <= 6'd0;
+		lives[6][4] <= 6'd0;
+		lives[6][5] <= 6'd0;
+		lives[6][6] <= 6'd0;
+		lives[6][7] <= 6'd1;
+		
+		lives[7][0] <= 6'd1;
+		lives[7][1] <= 6'd1;
+		lives[7][2] <= 6'd1;
+		lives[7][3] <= 6'd1;
+		lives[7][4] <= 6'd1;
+		lives[7][5] <= 6'd1;
+		lives[7][6] <= 6'd1;
+		lives[7][7] <= 6'd1;
+		
+
+	end
+	else
+	begin
+	///先調整頭的位置就好，身體等判斷完再處理
+		if(direction == 2'd0)  ///如果向上走
+		begin
+			head[0] <= head[0]-3'd1;			
+		end
+		else if(direction == 2'd1)  ///如果向下走
+		begin
+			head[0] <= head[0]+3'd1;
+		end
+		else if(direction == 2'd2)  ///如果向左走
+		begin
+			head[1] <= head[1]-3'd1;
+		end
+		else   ////向右走
+		begin
+			head[1] <= head[1]+3'd1;
+		end
+	end
+end
+
+
+always@(head)
+begin
+	//if die
+	if(head[0]==0||head[1]==0||head[0]==7||head[1]==7)
+	begin
+		len = 6'd3;
+		head[0] = 6;           
+		head[1] = 1;           
+		lives[0][0] = 6'd1;
+		lives[0][1] = 6'd1;
+		lives[0][2] = 6'd1;
+		lives[0][3] = 6'd1;
+		lives[0][4] = 6'd1;
+		lives[0][5] = 6'd1;
+		lives[0][6] = 6'd1;
+		lives[0][7] = 6'd1;
+		
+		lives[1][0] = 6'd1;
+		lives[1][1] = 6'd0;
+		lives[1][2] = 6'd0;
+		lives[1][3] = 6'd0;
+		lives[1][4] = 6'd0;
+		lives[1][5] = 6'd0;
+		lives[1][6] = 6'd0;
+		lives[1][7] = 6'd1;
+		
+		lives[2][0] = 6'd1;
+		lives[2][1] = 6'd0;
+		lives[2][2] = 6'd0;
+		lives[2][3] = 6'd0;
+		lives[2][4] = 6'd0;
+		lives[2][5] = 6'd0;
+		lives[2][6] = 6'd0;
+		lives[2][7] = 6'd1;
+		
+		lives[3][0] = 6'd1;
+		lives[3][1] = 6'd0;
+		lives[3][2] = 6'd0;
+		lives[3][3] = 6'd0;
+		lives[3][4] = 6'd0;
+		lives[3][5] = 6'd0;
+		lives[3][6] = 6'd0;
+		lives[3][7] = 6'd1;
+		
+		lives[4][0] = 6'd1;
+		lives[4][1] = 6'd0;
+		lives[4][2] = 6'd0;
+		lives[4][3] = 6'd0;
+		lives[4][4] = 6'd0;
+		lives[4][5] = 6'd0;
+		lives[4][6] = 6'd0;
+		lives[4][7] = 6'd1;
+		
+		lives[5][0] = 6'd1;
+		lives[5][1] = 6'd0;
+		lives[5][2] = 6'd0;
+		lives[5][3] = 6'd0;
+		lives[5][4] = 6'd0;
+		lives[5][5] = 6'd0;
+		lives[5][6] = 6'd0;
+		lives[5][7] = 6'd1;
+		
+		lives[6][0] = 6'd1;
+		lives[6][1] = 6'd0;
+		lives[6][2] = 6'd0;
+		lives[6][3] = 6'd0;
+		lives[6][4] = 6'd0;
+		lives[6][5] = 6'd0;
+		lives[6][6] = 6'd0;
+		lives[6][7] = 6'd1;
+		
+		lives[7][0] = 6'd1;
+		lives[7][1] = 6'd1;
+		lives[7][2] = 6'd1;
+		lives[7][3] = 6'd1;
+		lives[7][4] = 6'd1;
+		lives[7][5] = 6'd1;
+		lives[7][6] = 6'd1;
+		lives[7][7] = 6'd1;
+	end
+	
+	//else if eat apple
+	else if(head[0]==apple[0] && head[1]==apple[1])
+	begin
+		//others
+		len = len + 6'd1;
+		lives[head[0]][head[1]] = len; 
+		apple[0] = 3'd4;
+		apple[1] = 3'd4;
+	end
+	else                                         ///沒吃到
+	begin
+		lives[head[0]][head[1]] = (len + 6'd1);      ///在頭的位置放目前長度+1，之後扣1，達到身體往前身長不變
+		if(lives[1][1] > 0)
+			begin 
+			lives[1][1] = lives[1][1] - 1;
+			end
+		if(lives[1][2] > 0)
+			begin 
+			lives[1][2] = lives[1][1] - 1;
+			end
+		if(lives[1][3] > 0)
+			begin 
+			lives[1][3] = lives[1][1] - 1;
+			end
+		if(lives[1][4] > 0)
+			begin 
+			lives[1][4] = lives[1][1] - 1;
+			end
+		if(lives[1][5] > 0)
+			begin 
+			lives[1][5] = lives[1][1] - 1;
+			end
+		if(lives[1][6] > 0)
+			begin 
+			lives[1][6] = lives[1][1] - 1;
+			end
+		if(lives[2][1] > 0)
+			begin 
+			lives[2][1] = lives[1][1] - 1;
+			end
+		if(lives[2][2] > 0)
+			begin 
+			lives[2][2] = lives[1][1] - 1;
+			end
+		if(lives[2][3] > 0)
+			begin 
+			lives[2][3] = lives[1][1] - 1;
+			end
+		if(lives[2][4] > 0)
+			begin 
+			lives[2][4] = lives[1][1] - 1;
+			end
+		if(lives[2][5] > 0)
+			begin 
+			lives[2][5] = lives[1][1] - 1;
+			end
+		if(lives[2][6] > 0)
+			begin 
+			lives[2][6] = lives[1][1] - 1;
+			end
+		if(lives[3][1] > 0)
+			begin 
+			lives[3][1] = lives[1][1] - 1;
+			end
+		if(lives[3][2] > 0)
+			begin 
+			lives[3][2] = lives[1][1] - 1;
+			end
+		if(lives[3][3] > 0)
+			begin 
+			lives[3][3] = lives[1][1] - 1;
+			end
+		if(lives[3][4] > 0)
+			begin 
+			lives[3][4] = lives[1][1] - 1;
+			end
+		if(lives[3][5] > 0)
+			begin 
+			lives[3][5] = lives[1][1] - 1;
+			end
+		if(lives[3][6] > 0)
+			begin 
+			lives[3][6] = lives[1][1] - 1;
+			end
+		if(lives[4][1] > 0)
+			begin 
+			lives[4][1] = lives[1][1] - 1;
+			end
+		if(lives[4][2] > 0)
+			begin 
+			lives[4][2] = lives[1][1] - 1;
+			end
+		if(lives[4][3] > 0)
+			begin 
+			lives[4][3] = lives[1][1] - 1;
+			end
+		if(lives[4][4] > 0)
+			begin 
+			lives[4][4] = lives[1][1] - 1;
+			end
+		if(lives[4][5] > 0)
+			begin 
+			lives[4][5] = lives[1][1] - 1;
+			end
+		if(lives[4][6] > 0)
+			begin 
+			lives[4][6] = lives[1][1] - 1;
+			end
+		if(lives[5][1] > 0)
+			begin 
+			lives[5][1] = lives[1][1] - 1;
+			end
+		if(lives[5][2] > 0)
+			begin 
+			lives[5][2] = lives[1][1] - 1;
+			end
+		if(lives[5][3] > 0)
+			begin 
+			lives[5][3] = lives[1][1] - 1;
+			end
+		if(lives[5][4] > 0)
+			begin 
+			lives[5][4] = lives[1][1] - 1;
+			end
+		if(lives[5][5] > 0)
+			begin 
+			lives[5][5] = lives[1][1] - 1;
+			end
+		if(lives[5][6] > 0)
+			begin 
+			lives[5][6] = lives[1][1] - 1;
+			end
+		if(lives[6][1] > 0)
+			begin 
+			lives[6][1] = lives[1][1] - 1;
+			end
+		if(lives[6][2] > 0)
+			begin 
+			lives[6][2] = lives[1][1] - 1;
+			end
+		if(lives[6][3] > 0)
+			begin 
+			lives[6][3] = lives[1][1] - 1;
+			end
+		if(lives[6][4] > 0)
+			begin 
+			lives[6][4] = lives[1][1] - 1;
+			end
+		if(lives[6][5] > 0)
+			begin 
+			lives[6][5] = lives[1][1] - 1;
+			end
+		if(lives[6][6] > 0)
+			begin 
+			lives[6][6] = lives[1][1] - 1;
+			end	
+	end
+	for(xp=0;xp<8;xp=xp+1)
+	begin
+		for(yp=0;yp<8;yp=yp+1)
+		begin
+			live[xp*8+yp] = lives[xp][yp];
+		end
+	end
+	
+end
+
+endmodule

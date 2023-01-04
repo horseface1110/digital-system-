@@ -1,0 +1,18 @@
+module rand_number(clk,rand);
+input clk;
+output [7:0]rand;
+reg [7:0]rand;
+
+always@(posedge clk)
+begin
+	rand[0] <= rand[7];
+	rand[1] <= rand[0];
+	rand[2] <= rand[1];
+	rand[3] <= rand[2];
+	rand[4] <= rand[3]^rand[7];
+	rand[5] <= rand[4]^rand[7];
+	rand[6] <= rand[5]^rand[7];
+	rand[7] <= rand[6];
+	
+end
+endmodule

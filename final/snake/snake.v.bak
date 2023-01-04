@@ -1,0 +1,56 @@
+module main(w,a,s,d,out,row,col,clk,rst);
+
+//最外圈永遠亮，實際控制範圍為(1,1)~(6,6)
+
+input w,a,s,d,clk,rst;
+output [7:0]row,col;
+output [6:0]out;
+wire [1:0]dirc;//use 0~3 to represent wasd
+wire [6*8*8-1:0]live;
+wire [5:0]len;
+wire div10000,div12500000;
+
+
+div10000 v0(
+	.clk(clk),
+	.rst(rst),
+	.div_clk(div10000)
+);
+div1250000 v1(
+	.clk(clk),
+	.rst(rst),
+	.div_clk(div1250000)
+);
+
+changeDirec u0(
+	.w(w),//I
+	.a(a),//I
+	.s(s),//I
+	.d(d),//I
+	.direction(dirc),//O
+	.rst(rst)//I
+);
+
+move u1(
+	.clk(div1250000),//I
+	.rst(rst),//I
+	.direction(dirc),//I
+	.live(live),//O
+	.len(len)//O
+);
+
+SevenDisplay d0(
+.count(len),
+.OUT(out)
+);
+
+matrix d1(
+	.clock(div10000),//I
+	.reset(rst),
+	.live(live),//I
+	.dot_row(row),//O
+	.dot_col(col)//O
+);
+
+endmodule
+
